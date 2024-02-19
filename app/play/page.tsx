@@ -1,18 +1,17 @@
+"use client";
+
+import { useState, useEffect } from 'react'
+
 async function getGame() {
     try {
-        const response = await fetch("localhost:8080/game_get", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await fetch("http://localhost:8080/game_get");
         if (!response.ok) {
             console.error("Error getting game: ", response.status);
             return "Error getting game: " + response.status;
         }
-        const data = response.json();
-        console.log(data);
-        return data;
+        const gameData = await response.json();
+        console.log(gameData);
+        return gameData.Name;
     } catch (error) {
         console.error("Error getting game: ", error);
         return "Error getting game: " + error;
@@ -20,8 +19,13 @@ async function getGame() {
 }
 
 
-export default async function Play() {
-    var game = await getGame();
+export default function Play() {
+    const [game, setCurrentGame] = useState("");
+    useEffect(() => {
+        getGame().then((gameName) => {
+            setCurrentGame(gameName);
+        });
+    }, [])
     return (
         <p>We are playing {game}</p>
     );

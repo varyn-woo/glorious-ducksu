@@ -15,15 +15,13 @@ export function GameButton({ game }: { game: string }) {
 
 async function selectGame(game: string) {
   try {
-    const response = await fetch("localhost:8080/game_set", {
+    const response = await fetch("http://localhost:8080/game_set", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: "{game: ${game}}",
+      body: "{\"game\": \"" + game + "\"}",
     });
-    const data = response.json();
-    console.log(data);
   } catch (error) {
     console.error("Error setting game: ", error);
   }
