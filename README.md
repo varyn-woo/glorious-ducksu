@@ -11,6 +11,17 @@ To run this, you need to set up:
 To run the website, `cd` into the directory and run `npm run dev`. Then, go to `localhost:3000` to view the current version of the site. This will live update as you edit the code and save your changes.
 
 ## Protobufs
+To set up the submodule when first cloning the repo:
+```shell
+git submodule update --init --recursive
+```
+
+To update the submodule after something in it changes:
+```shell
+git submodule update --recursive --remote
+```
+
+
 See `ducksu-protos/README.md` for more detailed instructions on setting up protos. If you have done all of the setup there, you should just be able to use:
 ```shell
 buf generate
