@@ -1,4 +1,8 @@
-"use client"
+import { toBinary, create } from "@bufbuild/protobuf";
+import { useCallback } from "react";
+import { useNavigate } from "react-router";
+import { UserInputRequestSchema } from "~/gen/api_pb";
+import { useWebSocket } from "~/utils/Websocket";
 
 export function TextInput(props: {
     onChange?: (value: string) => void | undefined,
@@ -25,3 +29,33 @@ export function TextInput(props: {
     );
 
 }
+
+
+export function GameButton(props: { game: string }) {
+    const navigate = useNavigate();
+    const webSocket = useWebSocket();
+    const triggerNewGame = useCallback(() => {
+        if (!webSocket) {
+            console.error("WebSocket is not connected");
+            return;
+        }
+        const req = create(UserInputRequestSchema, {
+            request: {
+                value: "game",
+                case: 'newGameRequest'
+            }
+        });
+        webSocket.send(toBinary(UserInputRequestSchema, req));
+    }, [webSocket]);
+
+
+    const handleClick = () => {
+        triggerNewGame();
+        navigate("/play/" + props.game);
+        console.log("Navigating to game:", props.game);
+    };
+
+    return (
+        <button onClick={handleClick}>{props.game}</button>
+    );
+};

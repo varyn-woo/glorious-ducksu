@@ -1,6 +1,3 @@
-import { json } from "stream/consumers";
-import { AnyCnameRecord } from "dns";
-
 export interface FetchReq_t {
     endpoint: string;
     request: RequestInit;

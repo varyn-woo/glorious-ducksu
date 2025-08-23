@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "game_state.proto";
+
+package gamestate;
+
+
+message StartGameRequest {
+    string game_id = 1; // unique identifier for the game
+    string host_player_id = 2; // player id of the host starting the game
+}
+
+message PlayerAddRequest {
+    string player_id = 1; // unique identifier for the player
+    string display_name = 2; // player's display name
+}
+
+message UserInputRequest {
+    oneof request {
+        TextInput text_input_request = 1; // for text inputs
+        Vote vote_request = 2; // for votes
+        PlayerAddRequest player_add_request = 3; // for adding a new player
+        StartGameRequest start_game_request = 4; // for starting the game
+        string new_game_request = 5; // new game request with string identifier for game type
+    }
+}
+
+message ServerResponse {
+    oneof response {
+        GameState game_state = 1; // responding with new game state
+        string error_message = 2; // error message if type is ERROR
+        bool acknowledgement = 3; // acknowledgment message for successful operations that don't need a data response
+    }
+}
