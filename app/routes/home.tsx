@@ -1,13 +1,20 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { WebSocketProvider } from "~/utils/Websocket";
+import { GameProvider, GameWindow } from "~/play/GameController";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
+    { title: "Board games!" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return (<main>
+    <WebSocketProvider>
+      <GameProvider>
+        <GameWindow />
+      </GameProvider>
+    </WebSocketProvider>
+  </main>);
 }

@@ -1,9 +1,11 @@
+import { create } from "@bufbuild/protobuf";
 import { type ReactNode, useRef, useEffect, useContext, createContext } from "react";
+import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
 
 const WebSocketContext = createContext<WebSocket | null>(null);
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
-    const socketRef = useRef<WebSocket | null>(null);
+    const socketRef = useRef<WebSocket | null>(new WebSocket('ws://localhost:8080/'));
 
     useEffect(() => {
         // Open the connection when the component mounts
@@ -27,3 +29,10 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useWebSocket = () => useContext(WebSocketContext);
+
+export function makeRequest(request: UserInputRequest["request"]
+) {
+    return create(UserInputRequestSchema, {
+        request
+    });
+}

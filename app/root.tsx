@@ -2,17 +2,15 @@ import {
   isRouteErrorResponse,
   Links,
   Meta,
-  Outlet,
   Scripts,
   ScrollRestoration,
 } from "react-router";
 
-import type { Route } from "./+types/root";
+import type { Route as Routing } from "./+types/root";
 import "./app.css";
-import { WebSocketProvider } from "./utils/Websocket";
-import { GameButton } from "./ui/Inputs";
+import Home from "./routes/home";
 
-export const links: Route.LinksFunction = () => [
+export const links: Routing.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -44,23 +42,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <main style={{ display: "flex", minHeight: "100vh", flexDirection: "column", alignItems: "center", padding: 24 }}>
-    <WebSocketProvider>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20 }}>
-        <h1 style={{ fontSize: "4rem", fontWeight: "bold" }}>Glorious Ducksu Game Server</h1>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 24 }}>
-        <p>Pick a game</p>
-        <div style={{ display: "flex", gap: 16 }}>
-          <GameButton game="Psych" />
-          <GameButton game="Mao" />
-        </div>
-      </div>
-    </WebSocketProvider>
-  </main>;
+  return <Home />
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error }: Routing.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
