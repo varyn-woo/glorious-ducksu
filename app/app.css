@@ -7,13 +7,41 @@
 
 html,
 body {
-  background-color: #fff;
+  background-color: #000000;
+  font-family: monospace;
+  color: #ffffff;
+}
+
+div {
+  display: flex;
+  margin: 3em;
+}
+
+p {
+  font-size: large;
 }
 
 button {
-  padding: 2em;
-  background-color: #0f172a;
-  border: 2px solid #1e253d;
-  border-radius: 12px;
+  padding: 1em;
+  background-color: #304d91;
+  border-radius: 1em;
   cursor: pointer;
+  font-size: large;
+}
+
+input {
+  border: 1px solid #ffffff;
+  background-color: #111111;
+  border-radius: 0.5em;
+  padding: 1em;
+  font-size: large;
+}
+
+button:hover {
+  background-color: #1b3269;
+}
+
+button:disabled {
+  background-color: #898989;
+  cursor: default;
 }

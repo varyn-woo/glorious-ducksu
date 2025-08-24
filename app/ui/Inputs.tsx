@@ -1,27 +1,35 @@
 import { toBinary, create } from "@bufbuild/protobuf";
-import { useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useCallback, useRef } from "react";
 import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
-import { useWebSocket } from "~/utils/Websocket";
+import { useMakeWsRequest, useWebSocket } from "~/utils/Websocket";
 
 export function TextInput(props: {
+  label: string
+  placeholder?: string
+  invalidMessage?: string | null
   onChange?: (value: string) => void | undefined,
   onSubmit: (value: string) => void,
-  placeholder?: string
 }) {
 
+  const currentInput = useRef<string>("");
+  const onChangeUpdate = useCallback((text: string) => {
+    props.onChange ? props.onChange(text) : null;
+    currentInput.current = text;
+  }, [props.onChange])
+
   return (
-    <div className="flex items-center">
+    <div style={{ flexDirection: "column", alignItems: "center", gap: "2em" }}>
+      <p>{props.label}</p>
       <input
         id="textInput"
         type="text"
-        onChange={(e) => props.onChange ? props.onChange(e.target.value) : null}
+        onChange={(e) => onChangeUpdate(e.target.value)}
         placeholder={props.placeholder || "Type here..."}
-        className="border rounded p-2"
       />
+      <p style={{ color: "#aa0000", height: "2em" }}>{props.invalidMessage}</p>
       <button
-        onClick={() => props.onSubmit((document.querySelector('input[id="textInput"]') as HTMLInputElement).value)}
-        className="ml-2 bg-blue-500 text-white rounded p-2"
+        onClick={() => props.onSubmit(currentInput.current)}
+        disabled={props.invalidMessage !== null || currentInput.current === ""}
       >
         Submit
       </button>
@@ -31,19 +39,13 @@ export function TextInput(props: {
 }
 
 
-export function RequestButton(props: { request: UserInputRequest, label: string }) {
-  const webSocket = useWebSocket();
-  const triggerRequest = useCallback(() => {
-    if (!webSocket) {
-      console.error("WebSocket is not connected");
-      return;
-    }
-    webSocket.send(toBinary(UserInputRequestSchema, props.request));
-  }, [webSocket]);
 
+export function RequestButton(props: { request: UserInputRequest, label: string }) {
+
+  const makeWsRequest = useMakeWsRequest();
 
   const handleClick = () => {
-    triggerRequest();
+    makeWsRequest(props.request);
   };
 
   return (

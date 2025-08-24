@@ -28,7 +28,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return <div>Connecting to WebSocket...</div>;
   }
 
-  ws.onmessage = (event) => {
+  ws.onmessage = (event: any) => {
     console.log("Received message:", event.data);
     if (event.type === "pong") {
       console.log("Received pong");
@@ -57,8 +57,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   );
 }
 
+export const useGameState = () => useContext(GameContext);
+
 export function GameWindow() {
-  const gameState = useContext(GameContext);
+  const gameState = useGameState();
   if (!gameState) {
     return <div>Loading game state...</div>;
   }

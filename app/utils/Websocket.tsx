@@ -1,5 +1,5 @@
-import { create } from "@bufbuild/protobuf";
-import { type ReactNode, useRef, useEffect, useContext, createContext } from "react";
+import { create, toBinary } from "@bufbuild/protobuf";
+import { type ReactNode, useRef, useEffect, useContext, createContext, useCallback } from "react";
 import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
 
 const WebSocketContext = createContext<WebSocket | null>(null);
@@ -30,7 +30,18 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
 export const useWebSocket = () => useContext(WebSocketContext);
 
-export function makeRequest(request: UserInputRequest["request"]
+export const useMakeWsRequest = () => {
+    const webSocket = useContext(WebSocketContext);
+    return useCallback((request: UserInputRequest) => {
+        if (!webSocket) {
+            console.error("WebSocket is not connected");
+            return;
+        }
+        webSocket.send(toBinary(UserInputRequestSchema, request));
+    }, [webSocket]);
+}
+
+export function createUserInputRequest(request: UserInputRequest["request"]
 ) {
     return create(UserInputRequestSchema, {
         request
