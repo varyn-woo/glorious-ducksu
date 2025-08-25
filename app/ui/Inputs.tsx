@@ -6,14 +6,16 @@ import { useMakeWsRequest, useWebSocket } from "~/utils/Websocket";
 export function TextInput(props: {
   label: string
   placeholder?: string
-  invalidMessage?: string | null
+  invalidMessage?: string | undefined
   onChange?: (value: string) => void | undefined,
   onSubmit: (value: string) => void,
 }) {
 
   const currentInput = useRef<string>("");
   const onChangeUpdate = useCallback((text: string) => {
-    props.onChange ? props.onChange(text) : null;
+    if (props.onChange) {
+      props.onChange(text)
+    }
     currentInput.current = text;
   }, [props.onChange])
 
@@ -29,7 +31,7 @@ export function TextInput(props: {
       <p style={{ color: "#aa0000", height: "2em" }}>{props.invalidMessage}</p>
       <button
         onClick={() => props.onSubmit(currentInput.current)}
-        disabled={props.invalidMessage !== null || currentInput.current === ""}
+        disabled={props.invalidMessage !== undefined || currentInput.current === ""}
       >
         Submit
       </button>

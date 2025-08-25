@@ -1,16 +1,16 @@
 import { create, toBinary } from "@bufbuild/protobuf";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { PlayerAddRequestSchema, StartGameRequestSchema, UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
 import { type Player, PlayerSchema } from "~/gen/game_state_pb";
 import { RequestButton, TextInput } from "~/ui/Inputs";
 import { createUserInputRequest, useMakeWsRequest, useWebSocket } from "~/utils/Websocket";
-import { useGameState } from "./GameController";
+import { usePlayerState } from "./GameController";
 
 export function StartScreen() {
   const [hasSelectedPlayer, setHasSelectedPlayer] = useState(false);
   const currentPlayer = useRef<Player | null>(null)
-  const [invalidMessage, setInvalidMessage] = useState<string | null>(null);
-  const gameState = useGameState();
+  const [invalidMessage, setInvalidMessage] = useState<string | undefined>(undefined);
+  const ps = usePlayerState();
   const makeWsRequest = useMakeWsRequest();
 
   if (!hasSelectedPlayer) {
@@ -23,16 +23,16 @@ export function StartScreen() {
           invalidMessage={invalidMessage}
           onChange={(name: string) => {
             console.log("got a new change in text field: ", name)
-            const isValid = validateNameChoice(name, gameState?.players);
+            const isValid = validateNameChoice(name, ps?.gameState?.players);
             if (!isValid) {
               setInvalidMessage("Name is already taken")
             } else {
-              setInvalidMessage(null);
+              setInvalidMessage(undefined);
             }
           }}
           onSubmit={(name: string) => {
-            currentPlayer.current = create(PlayerSchema, { displayName: name, id: crypto.randomUUID() });
-            const req = createUserInputRequest({
+            currentPlayer.current = create(PlayerSchema, { displayName: name, id: ps?.me?.id });
+            const req = createUserInputRequest(ps?.me?.id, {
               case: "playerAddRequest", value: create(PlayerAddRequestSchema, {
                 playerId: currentPlayer.current.id,
                 displayName: currentPlayer.current.displayName
@@ -51,16 +51,16 @@ export function StartScreen() {
         <div style={{ flexDirection: "column", alignItems: "center", gap: "2em" }}>
           <h1 style={{ fontSize: "4rem", fontWeight: "bold" }}>Glorious Ducksu Game Server</h1>
           <p>Current players:</p>
-          {gameState?.players.map((player) => (
+          {ps?.gameState?.players.map((player) => (
             <p>
               {player.displayName} {player.id === currentPlayer.current?.id ? "(You)" : ""}
             </p>
           ))}
           <p>Waiting for host to start the game...</p>
-          {currentPlayer.current?.id === gameState?.hostPlayerId &&
+          {currentPlayer.current?.id === ps?.gameState?.hostPlayerId &&
             <div >
               <RequestButton
-                request={createUserInputRequest({
+                request={createUserInputRequest(ps?.me?.id, {
                   case: "startGameRequest", value: create(StartGameRequestSchema, {
                     hostPlayerId: currentPlayer.current?.id || "",
                     gameId: "Psych"

@@ -1,6 +1,7 @@
 import { create, toBinary } from "@bufbuild/protobuf";
 import { type ReactNode, useRef, useEffect, useContext, createContext, useCallback } from "react";
 import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
+import { usePlayerState } from "~/play/GameController";
 
 const WebSocketContext = createContext<WebSocket | null>(null);
 
@@ -41,9 +42,10 @@ export const useMakeWsRequest = () => {
     }, [webSocket]);
 }
 
-export function createUserInputRequest(request: UserInputRequest["request"]
+export function createUserInputRequest(playerId: string | undefined, request: UserInputRequest["request"]
 ) {
     return create(UserInputRequestSchema, {
-        request
+        playerId,
+        request,
     });
 }
