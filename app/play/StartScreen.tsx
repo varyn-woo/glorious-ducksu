@@ -1,5 +1,5 @@
 import { create, toBinary } from "@bufbuild/protobuf";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState, type Key } from "react";
 import { PlayerAddRequestSchema, StartGameRequestSchema, UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
 import { type Player, PlayerSchema } from "~/gen/game_state_pb";
 import { RequestButton, TextInput } from "~/ui/Inputs";
@@ -51,8 +51,8 @@ export function StartScreen() {
         <div style={{ flexDirection: "column", alignItems: "center", gap: "2em" }}>
           <h1 style={{ fontSize: "4rem", fontWeight: "bold" }}>Glorious Ducksu Game Server</h1>
           <p>Current players:</p>
-          {ps?.gameState?.players.map((player) => (
-            <p>
+          {ps?.gameState?.players.map((player: Player, i: Key) => (
+            <p key={i}>
               {player.displayName} {player.id === currentPlayer.current?.id ? "(You)" : ""}
             </p>
           ))}

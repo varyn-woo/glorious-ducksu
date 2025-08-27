@@ -5,6 +5,7 @@ import { createUserInputRequest, useMakeWsRequest } from "~/utils/Websocket";
 import { create } from "@bufbuild/protobuf";
 import { TextInputSchema, VoteSchema } from "~/gen/game_state_pb";
 import { usePlayerState } from "./GameController";
+import type { Key } from "react";
 
 export function ServerElement(props: { se: UiElement }) {
     const ps = usePlayerState();
@@ -39,7 +40,7 @@ export function ServerElement(props: { se: UiElement }) {
             </div>
         case "votingOptions":
             return <div style={{ flexDirection: "column" }}>
-                {el.value.options.map((listItem, index) => <RequestButton
+                {el.value.options.map((listItem: VotingOption, index: Key) => <RequestButton
                     key={index}
                     request={
                         createUserInputRequest(ps?.me?.id, {
