@@ -31,7 +31,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send('ping');
       }
-    }, 3000); // Ping every 3 seconds
+    }, 1000); // Ping every 1 second
     return () => clearInterval(pings);
   }, [ws]);
 

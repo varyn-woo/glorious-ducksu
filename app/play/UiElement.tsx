@@ -6,6 +6,7 @@ import { create } from "@bufbuild/protobuf";
 import { TextInputSchema, VoteSchema } from "~/gen/game_state_pb";
 import { usePlayerState } from "./GameController";
 import type { Key } from "react";
+import { time } from "console";
 
 export function ServerElement(props: { se: UiElement }) {
     const ps = usePlayerState();
@@ -56,6 +57,11 @@ export function ServerElement(props: { se: UiElement }) {
                 )
                 }
             </div>
+        case "countdownTimer":
+            const timeDiff = (Date.now() / 1000) - Number(ps?.gameState?.timerStart?.seconds ?? 0)
+            return (
+                <p>{timeDiff} seconds remaining...</p>
+            )
         default:
             return <p>Unknown UI element</p>
     }
