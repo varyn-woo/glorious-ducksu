@@ -11,13 +11,19 @@ export function TextInput(props: {
   onSubmit: (value: string) => void,
 }) {
 
-  const currentInput = useRef<string>("");
+  const currentInput = useRef<HTMLInputElement | null>(null);
   const onChangeUpdate = useCallback((text: string) => {
     if (props.onChange) {
       props.onChange(text)
     }
-    currentInput.current = text;
   }, [props.onChange])
+
+  const onSubmitClear = useCallback(() => {
+    props.onSubmit(currentInput.current?.value ?? "");
+    if (currentInput.current) {
+      currentInput.current.value = "";
+    }
+  }, [props.onSubmit])
 
   return (
     <div style={{ flexDirection: "column", alignItems: "center", gap: "2em" }}>
@@ -25,13 +31,14 @@ export function TextInput(props: {
       <input
         id="textInput"
         type="text"
+        ref={currentInput}
         onChange={(e) => onChangeUpdate(e.target.value)}
         placeholder={props.placeholder || "Type here..."}
       />
       <p style={{ color: "#aa0000", height: "2em" }}>{props.invalidMessage}</p>
       <button
-        onClick={() => props.onSubmit(currentInput.current)}
-        disabled={props.invalidMessage !== undefined || currentInput.current === ""}
+        onClick={onSubmitClear}
+        disabled={props.invalidMessage !== undefined || currentInput.current?.value === ""}
       >
         Submit
       </button>

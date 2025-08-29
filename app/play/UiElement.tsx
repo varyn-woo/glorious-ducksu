@@ -57,7 +57,7 @@ export function ServerElement(props: { se: UiElement }) {
                 }
             </div>
         case "countdownTimer":
-            const timeDiff = (Date.now() / 1000) - Number(ps?.gameState?.timerStart?.seconds ?? 0)
+            const timeDiff = Math.floor(((Date.now() / 1000) - Number(ps?.gameState?.timerStart?.seconds ?? 0)))
             return (
                 <p>{timeDiff} seconds remaining...</p>
             )
