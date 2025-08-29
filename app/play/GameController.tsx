@@ -25,7 +25,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   // Set up ping to keep the connection alive
   useEffect(() => {
-    if (!ws) return;
+    if (!ws) {
+      console.log("no websocket found")
+      return;
+    }
     const pings = setInterval(() => {
       console.log("Sending ping to server");
       if (ws.readyState === WebSocket.OPEN) {

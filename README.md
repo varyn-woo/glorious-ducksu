@@ -6,6 +6,10 @@ To run this, you need to set up:
 - [Node/NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - [React Router](https://reactrouter.com/start/framework/installation)
 - [Gojo](https://github.com/varyn-woo/gojo) (Go server side of this project)
+- Generate a certificate and key using `openssl` (certificate filepaths must correspond to the ones in `vite.config.ts`):
+```shell
+openssl req -x509 -newkey rsa:4096 -keyout dev.key -out dev.crt -days 365 -nodes -subj "/CN=localhost
+```
 
 ## Viewing the Site
 To run the website, `cd` into the directory and run `npm run dev`. Then, go to `localhost:5173` to view the current version of the site. This will live update as you edit the code and save your changes.

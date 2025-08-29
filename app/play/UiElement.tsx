@@ -6,7 +6,6 @@ import { create } from "@bufbuild/protobuf";
 import { TextInputSchema, VoteSchema } from "~/gen/game_state_pb";
 import { usePlayerState } from "./GameController";
 import type { Key } from "react";
-import { time } from "console";
 
 export function ServerElement(props: { se: UiElement }) {
     const ps = usePlayerState();

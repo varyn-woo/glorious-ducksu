@@ -4,7 +4,7 @@ import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
 import { usePlayerState } from "~/play/GameController";
 
 const WebSocketContext = createContext<WebSocket | null>(null);
-const endpoint = 'ws://localhost:8080/'
+const endpoint = 'wss://localhost:8443/ws'
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     const socketRef = useRef<WebSocket | null>(new WebSocket(endpoint));
