@@ -4,13 +4,14 @@ import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
 import { usePlayerState } from "~/play/GameController";
 
 const WebSocketContext = createContext<WebSocket | null>(null);
+const endpoint = 'wss://localhost:8443/ws'
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
-    const socketRef = useRef<WebSocket | null>(new WebSocket('ws://localhost:8080/'));
+    const socketRef = useRef<WebSocket | null>(new WebSocket(endpoint));
 
     useEffect(() => {
         // Open the connection when the component mounts
-        const socket = new WebSocket('ws://localhost:8080/');
+        const socket = new WebSocket(endpoint);
 
         socket.onopen = () => console.log('WebSocket connected');
         socket.onclose = () => console.log('WebSocket disconnected');

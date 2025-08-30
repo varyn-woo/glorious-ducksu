@@ -10,14 +10,19 @@ import type { Key } from "react";
 export function ServerElement(props: { se: UiElement }) {
     const ps = usePlayerState();
     const makeWsRequest = useMakeWsRequest();
+    const gameState = ps!.gameState!;
+    const me = ps!.me!;
     const el = props.se.element;
+    if (me.isWaiting) {
+        return <p>Awaiting responses from other players...</p>
+    }
     switch (el.case) {
         case "textField":
             return (<TextInput
                 label={el.value.label}
                 placeholder={el.value.placeholder}
                 onSubmit={(name: string) => {
-                    const req = createUserInputRequest(ps?.me?.id, {
+                    const req = createUserInputRequest(me.id, {
                         case: "textInputRequest", value: create(TextInputSchema, {
                             text: name,
                             inputType: el.value.inputType,
@@ -27,7 +32,7 @@ export function ServerElement(props: { se: UiElement }) {
                 }} />);
         case "simpleButton":
             return (<RequestButton
-                request={createUserInputRequest(ps?.me?.id, {
+                request={createUserInputRequest(me.id, {
                     case: "buttonPressRequest",
                     value: el.value,
                 })}
@@ -43,7 +48,7 @@ export function ServerElement(props: { se: UiElement }) {
                 {el.value.options.map((listItem: VotingOption, index: Key) => <RequestButton
                     key={index}
                     request={
-                        createUserInputRequest(ps?.me?.id, {
+                        createUserInputRequest(me.id, {
                             case: "voteRequest",
                             value: create(VoteSchema, {
                                 targetId: listItem.id,
@@ -56,6 +61,12 @@ export function ServerElement(props: { se: UiElement }) {
                 )
                 }
             </div>
+        case "countdownTimer":
+            const timeElapsed = Math.floor(((Date.now() / 1000) - Number(gameState.timerStart?.seconds ?? 0)))
+            const timeDiff = gameState.timerDuration - timeElapsed
+            return (
+                <p>{timeDiff} seconds remaining...</p>
+            )
         default:
             return <p>Unknown UI element</p>
     }

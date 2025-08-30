@@ -5,6 +5,7 @@ import { type Player, PlayerSchema } from "~/gen/game_state_pb";
 import { RequestButton, TextInput } from "~/ui/Inputs";
 import { createUserInputRequest, useMakeWsRequest, useWebSocket } from "~/utils/Websocket";
 import { usePlayerState } from "./GameController";
+import { CenteredWindow } from "~/ui/Containers";
 
 export function StartScreen() {
   const [hasSelectedPlayer, setHasSelectedPlayer] = useState(false);
@@ -15,7 +16,7 @@ export function StartScreen() {
 
   if (!hasSelectedPlayer) {
     return (
-      <div style={{ flexDirection: "column", alignItems: "center", gap: "2em" }}>
+      <CenteredWindow>
         <h1 style={{ fontSize: "4rem", fontWeight: "bold" }}>Glorious Ducksu Game Server</h1>
         <TextInput
           label="Enter your name:"
@@ -31,8 +32,8 @@ export function StartScreen() {
             }
           }}
           onSubmit={(name: string) => {
-            currentPlayer.current = create(PlayerSchema, { displayName: name, id: ps?.me?.id });
-            const req = createUserInputRequest(ps?.me?.id, {
+            currentPlayer.current = create(PlayerSchema, { displayName: name, id: ps!.me!.id });
+            const req = createUserInputRequest(ps!.me!.id, {
               case: "playerAddRequest", value: create(PlayerAddRequestSchema, {
                 playerId: currentPlayer.current.id,
                 displayName: currentPlayer.current.displayName
@@ -41,7 +42,7 @@ export function StartScreen() {
             makeWsRequest(req);
             setHasSelectedPlayer(true);
           }} />
-      </div>
+      </CenteredWindow>
     );
   }
 
@@ -51,16 +52,16 @@ export function StartScreen() {
         <div style={{ flexDirection: "column", alignItems: "center", gap: "2em" }}>
           <h1 style={{ fontSize: "4rem", fontWeight: "bold" }}>Glorious Ducksu Game Server</h1>
           <p>Current players:</p>
-          {ps?.gameState?.players.map((player: Player, i: Key) => (
+          {ps!.gameState!.players.map((player: Player, i: Key) => (
             <p key={i}>
               {player.displayName} {player.id === currentPlayer.current?.id ? "(You)" : ""}
             </p>
           ))}
           <p>Waiting for host to start the game...</p>
-          {currentPlayer.current?.id === ps?.gameState?.hostPlayerId &&
+          {currentPlayer.current?.id === ps!.gameState!.hostPlayerId &&
             <div >
               <RequestButton
-                request={createUserInputRequest(ps?.me?.id, {
+                request={createUserInputRequest(ps!.me!.id, {
                   case: "startGameRequest", value: create(StartGameRequestSchema, {
                     hostPlayerId: currentPlayer.current?.id || "",
                     gameId: "Psych"
