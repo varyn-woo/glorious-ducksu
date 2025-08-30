@@ -5,7 +5,8 @@ import { ServerResponseSchema } from "~/gen/api_pb";
 import { GameStateSchema, PlayerSchema, type GameState, type Player } from "~/gen/game_state_pb";
 import { useWebSocket } from "~/utils/Websocket";
 import { StartScreen } from "./StartScreen";
-import { Interface } from "./Interface";
+import { GameInterface } from "./GameInterface";
+import { CenteredWindow } from "~/ui/Containers";
 
 export interface PlayerState {
   gameState: GameState | null,
@@ -17,7 +18,7 @@ const GameContext = createContext<PlayerState | null>(null);
 export function GameProvider({ children }: { children: ReactNode }) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const ws = useWebSocket();
-  const playerId = crypto.randomUUID()
+  const playerId = useMemo(() => crypto.randomUUID(), [])
   const me = useMemo(() => gameState?.players.find((p: Player) => p.id === playerId) ?? create(PlayerSchema, {
     id: playerId,
   }), [gameState])
@@ -39,7 +40,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [ws]);
 
   if (!ws) {
-    return <div>Connecting to WebSocket...</div>;
+    return <CenteredWindow>Connecting to WebSocket...</CenteredWindow>;
   }
 
   ws.onmessage = (event: any) => {
@@ -82,5 +83,5 @@ export function GameWindow() {
   if (!ps.gameState.started) {
     return <StartScreen />
   }
-  return <Interface />
+  return <GameInterface />
 }

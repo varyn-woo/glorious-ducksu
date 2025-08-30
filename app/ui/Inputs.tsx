@@ -1,7 +1,6 @@
-import { toBinary, create } from "@bufbuild/protobuf";
 import { useCallback, useRef } from "react";
-import { UserInputRequestSchema, type UserInputRequest } from "~/gen/api_pb";
-import { useMakeWsRequest, useWebSocket } from "~/utils/Websocket";
+import { type UserInputRequest } from "~/gen/api_pb";
+import { useMakeWsRequest } from "~/utils/Websocket";
 
 export function TextInput(props: {
   label: string
@@ -33,6 +32,11 @@ export function TextInput(props: {
         type="text"
         ref={currentInput}
         onChange={(e) => onChangeUpdate(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onSubmitClear();
+          }
+        }}
         placeholder={props.placeholder || "Type here..."}
       />
       <p style={{ color: "#aa0000", height: "2em" }}>{props.invalidMessage}</p>
