@@ -33,6 +33,11 @@ export function TextInput(props: {
         type="text"
         ref={currentInput}
         onChange={(e) => onChangeUpdate(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onSubmitClear();
+          }
+        }}
         placeholder={props.placeholder || "Type here..."}
       />
       <p style={{ color: "#aa0000", height: "2em" }}>{props.invalidMessage}</p>
